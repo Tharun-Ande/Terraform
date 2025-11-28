@@ -1,3 +1,4 @@
+#create vpc
 resource "aws_vpc" "main" {
   cidr_block       = "10.0.0.0/16"
   instance_tenancy = "default"
@@ -6,6 +7,7 @@ resource "aws_vpc" "main" {
   }
 }
 
+#create public subnet
 resource "aws_subnet" "tharun_public" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.1.0/24"
@@ -14,6 +16,7 @@ resource "aws_subnet" "tharun_public" {
   }
 }
 
+#create private subnet
 resource "aws_subnet" "tharun_private" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.2.0/24"
@@ -22,6 +25,7 @@ resource "aws_subnet" "tharun_private" {
   }
 }
 
+#create internet gateway
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.main.id
   tags = {
@@ -29,6 +33,7 @@ resource "aws_internet_gateway" "gw" {
   }
 }
 
+#create public route table
  resource"aws_route_table" "tharun_public" {
   vpc_id = aws_vpc.main.id
   route {
@@ -40,6 +45,7 @@ resource "aws_internet_gateway" "gw" {
   }
 } 
 
+#create private route table
 resource "aws_route_table" "tharun_private" {
   vpc_id = aws_vpc.main.id
   route {
@@ -61,12 +67,14 @@ resource "aws_route_table_association" "private" {
   route_table_id = aws_route_table.tharun_private.id
 }
 
+#Attach Elastic IP
 resource "aws_eip" "tharun" {
   tags = {
     Name = "t-eip"
   }
 }
 
+#create NAT gateway
 resource "aws_nat_gateway" "tharun" {
   allocation_id = aws_eip.tharun.id
   subnet_id     = aws_subnet.tharun_private.id
@@ -75,11 +83,13 @@ resource "aws_nat_gateway" "tharun" {
   }
 }
 
+#create a Key pair
 resource "aws_key_pair" "t_key" {
   key_name   = "tharun-key"
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAADzBwzt7Qyaq2jPfg/HW1lOdnCCHp4jmnICK4EK5FDILrkxrr2gKd/703xs3xqQzFJq0qtIV+PGnosen4MDE7vSlU92NLDGh7UqJkyqZ5c2pgIoH1KSiWBMLkgSZDIup2vmQzXwy9nU8TH5PfN3yCTnwp2FfDD3WfE2N++tW3SoeiFYJ0NsDGMES3SMT4e3dKBfGe6R3eJDqtideSFTil58Q+ijW5UccNpWDRvLU6iVbOPoYwl7jvg+YVRAYasAA4qIE0Wfno5/br8z2IXk32DpOfmKCex4xuJqus9DqAmgPkxJqnuKswhZXs0Fm4l/fYQqiLORM7OOn7WqlnTCgZGSfDFq4MsR/1f4eeOI35L10QceD3h1bMGS7fITSlMgb6SvR7MJ0AZOLV+envVSH38UQcSEPNVktFQ6zHs793ehWyGfU05jjbRB3VqceSd0J5c90MHOxSs9CgOgIwqbLMaG8S/M9LbKdpONHeZdUnFCQkT8/maz4BJGx55WfjGayA93l6DYXpODQp8Jz3aMfjafLim08g7H25v9eAYbXHoQaU/FtCKMzHbSPSJWvEaqP+1NQN/gVySfKcFSCRpyh6bkOkALB6y4iuEwIxpDNFULiQIssm+x6TN3k6/wBTs4CH5iLnxVFGSdzqjEAZpIZn/Q1DebnB7gQoL8cZer9M9p andec@CHARAN"
 }
 
+#create Security group with inbound and outbound rules
 resource "aws_security_group" "t_sg" {
   name        = "t_sg"
   description = "Allow TLS inbound traffic and all outbound traffic"
@@ -110,6 +120,7 @@ resource "aws_security_group" "t_sg" {
   }
 }
 
+#create a public instance
 resource "aws_instance" "tharun" {
   ami           = "ami-0fa91bc90632c73c9"
   instance_type = "t3.micro"
@@ -122,6 +133,7 @@ resource "aws_instance" "tharun" {
   }
 }
 
+#create a private instance
 resource "aws_instance" "tharun_pvt" {
   ami           = "ami-0fa91bc90632c73c9"
   instance_type = "t3.micro"
@@ -133,4 +145,3 @@ resource "aws_instance" "tharun_pvt" {
     Name = "tharun_pvt"
   }
 }
-
