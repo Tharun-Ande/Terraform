@@ -1,4 +1,4 @@
 *
 !*.tf
 !.gitignore
-!terraform.tfstate
+!terraform.tfvars
