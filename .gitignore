@@ -1,4 +1,4 @@
 *
-!provider.tf
-!main.tf
+!*.tf
 !.gitignore
+!terraform.tfstate
