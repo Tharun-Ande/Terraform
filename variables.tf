@@ -33,8 +33,6 @@ variable "subnet_tag_pvt" {
     type = string
 }
 
-
-g
 variable "igw_tag" {
     description = "igw_tag"
     type = string
